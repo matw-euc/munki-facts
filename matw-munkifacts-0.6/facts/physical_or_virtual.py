@@ -48,8 +48,8 @@ def is_virtual_machine():
 def get_machine_type():
     '''Return the machine type: physical, vmware, virtualbox, parallels or
     unknown_virtual'''
-    if not is_virtual_machine():
-        return 'physical'
+    # if not is_virtual_machine():
+    #     return 'physical'
 
     # this is a virtual machine; see if we can tell which vendor
     try:
@@ -57,7 +57,7 @@ def get_machine_type():
                                  'SPEthernetDataType', 'SPHardwareDataType'],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = proc.communicate()[0]
-        plist = plistlib.readPlistFromString(output)
+        plist = plistlib.loads(output)
         br_version = plist[1]['_items'][0]['boot_rom_version']
         if 'VMW' in br_version:
             return 'vmware'
@@ -65,7 +65,7 @@ def get_machine_type():
             return 'virtualbox'
         else:
             ethernet_vid = plist[0]['_items'][0]['spethernet_vendor-id']
-            if '0x1ab8' in ethernet_vid:
+            if '0x1af4' in ethernet_vid:
                 return 'parallels'
 
     except (IOError, KeyError, OSError):
